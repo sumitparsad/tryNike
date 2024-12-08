@@ -16,34 +16,44 @@ function NewArrival() {
       .catch((error) => {
         console.error("There was an error fetching the new arrivals!", error);
       });
+
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      axios
+        .get(`http://localhost:5001/likes/${userId}`)
+        .then((response) => {
+          setLikedProducts(response.data.likedProducts.map(like => like.productId) || []);
+        })
+        .catch((error) => {
+          console.error("Error fetching liked products:", error);
+        });
+    }
   }, []);
 
-  const handleLikeClick = async (productId) => {
+  const handleLikeClick = async (e, productId) => {
+    e.preventDefault();
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
     if (userId && token) {
       try {
         const headers = { Authorization: `Bearer ${token}` };
-        await axios.post(
-          `http://localhost:5001/likes/add`,
-          { userId, productId },
-          { headers }
-        );
-        setLikedProducts((prevLikedProducts) =>
-          prevLikedProducts.includes(productId)
-            ? prevLikedProducts.filter((id) => id !== productId)
-            : [...prevLikedProducts, productId]
-        );
-      } catch (error) {
-        if (
-          error.response &&
-          error.response.status === 400 &&
-          error.response.data.message === "Product already liked"
-        ) {
-          alert("Product already liked");
+        if (likedProducts.includes(productId)) {
+          await axios.post(
+            `http://localhost:5001/likes/remove`,
+            { userId, productId },
+            { headers }
+          );
+          setLikedProducts((prev) => prev.filter((id) => id !== productId));
         } else {
-          console.error("Error adding product to likes:", error);
+          await axios.post(
+            `http://localhost:5001/likes/add`,
+            { userId, productId },
+            { headers }
+          );
+          setLikedProducts((prev) => [...prev, productId]);
         }
+      } catch (error) {
+        console.error("Error updating product likes:", error);
       }
     }
   };
@@ -68,9 +78,9 @@ function NewArrival() {
           <Link
             to={`/product/${product._id}`} // Navigate to product detail page
             key={product._id}
-            className="bg-white w-[260px] h-[400px] flex flex-col justify-between items-center relative p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+            className="bg-white w-[260px] h-[400px] flex flex-col justify-between items-center relative p-4 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300"
           >
-            <div className="w-full h-[250px] flex justify-center items-center bg-zinc-200 rounded-lg overflow-hidden">
+            <div className="w-full h-[250px] flex justify-center items-center bg-zinc-200 rounded-lg overflow-hidden ">
               <img
                 src={`http://localhost:5001/${product.image}`}
                 alt={product.name}
@@ -78,11 +88,8 @@ function NewArrival() {
               />
             </div>
             <div
-              className="absolute top-4 right-4 cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault(); // Prevent navigation when liking
-                handleLikeClick(product._id);
-              }}
+              className="absolute  top-4 right-4 cursor-pointer"
+              onClick={(e) => handleLikeClick(e, product._id)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
