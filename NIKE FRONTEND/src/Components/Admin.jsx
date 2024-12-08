@@ -95,9 +95,9 @@ function Admin() {
     Object.keys(newProduct).forEach((key) => {
       formData.append(key, newProduct[key]);
     });
-
+  
     console.log("Form data:", formData); // Log the form data
-
+  
     axios
       .post("http://localhost:5001/admin/create/product", formData, {
         headers: {
@@ -106,33 +106,62 @@ function Admin() {
       })
       .then((response) => {
         console.log("Product added:", response.data);
-        const addedProduct = response.data.product;
-        // Fetch the category name for the added product
+        setNewProduct({
+          name: "",
+          description: "",
+          price: "",
+          image: "",
+          categoryId: "",
+          stock: "",
+        }); // Reset the form state
+        setShowForm(false); // Close the form
+        // Fetch the updated product list
         axios
-          .get(`http://localhost:5001/categories/${addedProduct.categoryId}`)
-          .then((categoryResponse) => {
-            addedProduct.categoryId = categoryResponse.data.category.name; // Set the category name
-            setProducts((prevProducts) => [...prevProducts, addedProduct]); // Add the new product to the products list
-            setShowForm(false); // Close the form
-            setNewProduct({
-              name: "",
-              description: "",
-              price: "",
-              image: "",
-              categoryId: "",
-              stock: "",
-            });
+          .get("http://localhost:5001/products") // Updated API endpoint
+          .then((response) => {
+            console.log(response.data); // Log the response to check the data
+            const productsWithCategoryNames = response.data.products.map(
+              (product) => {
+                return {
+                  ...product,
+                  categoryName: product.categoryId.name, // Use the category name directly
+                  categoryId: product.categoryId._id, // Use the category ID
+                };
+              }
+            );
+            setProducts(productsWithCategoryNames);
           })
           .catch((error) => {
-            console.error("There was an error fetching the category!", error);
-            setShowForm(false); // Close the form even if fetching category fails
+            console.error("There was an error fetching the products!", error);
           });
       })
       .catch((error) => {
         console.error("There was an error adding the product!", error);
         setShowForm(false); // Close the form even if adding product fails
+        setNewProduct({
+          name: "",
+          description: "",
+          price: "",
+          image: "",
+          categoryId: "",
+          stock: "",
+        }); // Reset the form state
       });
   };
+  
+  const handleCloseForm = () => {
+    setShowForm(false);
+    setNewProduct({
+      name: "",
+      description: "",
+      price: "",
+      image: "",
+      categoryId: "",
+      stock: "",
+    }); // Reset the form state
+  };
+  
+ 
 
   const handleDeleteProduct = async (productID) => {
     try {
@@ -508,7 +537,7 @@ function Admin() {
             </form>
 
             <button
-              onClick={() => setShowForm(false)}
+              onClick={handleCloseForm}
               className="mt-4 text-red-600"
             >
               Close
