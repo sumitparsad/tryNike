@@ -27,7 +27,7 @@ const AllProducts = () => {
       axios
         .get(`http://localhost:5001/likes/${userId}`)
         .then((response) => {
-          setLikedProducts(response.data.likedProducts || []);
+          setLikedProducts(response.data.likedProducts.map(like => like.productId) || []);
         })
         .catch((error) => {
           console.error("Error fetching liked products:", error);
@@ -49,26 +49,23 @@ const AllProducts = () => {
     if (userId && token) {
       try {
         const headers = { Authorization: `Bearer ${token}` };
-        await axios.post(
-          `http://localhost:5001/likes/add`,
-          { userId, productId },
-          { headers }
-        );
-        setLikedProducts((prev) =>
-          prev.includes(productId)
-            ? prev.filter((id) => id !== productId)
-            : [...prev, productId]
-        );
-      } catch (error) {
-        if (
-          error.response &&
-          error.response.status === 400 &&
-          error.response.data.message === "Product already liked"
-        ) {
-          alert("Product already liked");
+        if (likedProducts.includes(productId)) {
+          await axios.post(
+            `http://localhost:5001/likes/remove`,
+            { userId, productId },
+            { headers }
+          );
+          setLikedProducts((prev) => prev.filter((id) => id !== productId));
         } else {
-          console.error("Error adding product to likes:", error);
+          await axios.post(
+            `http://localhost:5001/likes/add`,
+            { userId, productId },
+            { headers }
+          );
+          setLikedProducts((prev) => [...prev, productId]);
         }
+      } catch (error) {
+        console.error("Error updating product likes:", error);
       }
     }
   };
