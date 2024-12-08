@@ -69,10 +69,6 @@ function Navbar() {
     }
   };
 
-  const handleSearchClick = () => {
-    navigate("/all-products");
-  };
-
   useEffect(() => {
     fetchCartItemCount();
   }, []);
@@ -135,7 +131,6 @@ function Navbar() {
             placeholder="Search"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            onClick={handleSearchClick} // Navigate to all products page when clicked
             className="bg-transparent outline-none text-gray-700 w-full ml-1 text-[16px] "
           />
         </form>
