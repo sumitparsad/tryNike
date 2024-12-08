@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Import Link
-import Filter from "./Filter";
-import Sidebar from "./Sidebar";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-function WomenProducts() {
+const WomenProducts = () => {
   const [products, setProducts] = useState([]);
   const [likedProducts, setLikedProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -15,82 +14,87 @@ function WomenProducts() {
         setProducts(response.data.products);
       })
       .catch((error) => {
-        console.error(
-          "There was an error fetching the women's products!",
-          error
-        );
+        console.error("There was an error fetching the women's products!", error);
       });
+
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      axios
+        .get(`http://localhost:5001/likes/${userId}`)
+        .then((response) => {
+          setLikedProducts(response.data.likedProducts.map(like => like.productId) || []);
+        })
+        .catch((error) => {
+          console.error("Error fetching liked products:", error);
+        });
+    }
   }, []);
 
-  const handleLikeClick = async (productId) => {
+  const handleProductClick = (productId) => {
+    const product = products.find((item) => item._id === productId);
+    if (product) {
+      navigate(`/product/${productId}`, { state: { product } });
+    }
+  };
+
+  const handleLikeClick = async (e, productId) => {
+    e.stopPropagation();
     const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token"); // Get the token from localStorage
+    const token = localStorage.getItem("token");
     if (userId && token) {
       try {
-        const headers = { Authorization: `Bearer ${token}` }; // Set the Authorization header
-        await axios.post(
-          `http://localhost:5001/likes/add`,
-          { userId, productId },
-          { headers }
-        );
-        setLikedProducts((prevLikedProducts) =>
-          prevLikedProducts.includes(productId)
-            ? prevLikedProducts.filter((id) => id !== productId)
-            : [...prevLikedProducts, productId]
-        );
-      } catch (error) {
-        if (
-          error.response &&
-          error.response.status === 400 &&
-          error.response.data.message === "Product already liked"
-        ) {
-          alert("Product already liked");
+        const headers = { Authorization: `Bearer ${token}` };
+        if (likedProducts.includes(productId)) {
+          await axios.post(
+            `http://localhost:5001/likes/remove`,
+            { userId, productId },
+            { headers }
+          );
+          setLikedProducts((prev) => prev.filter((id) => id !== productId));
         } else {
-          console.error("Error adding product to likes:", error);
+          await axios.post(
+            `http://localhost:5001/likes/add`,
+            { userId, productId },
+            { headers }
+          );
+          setLikedProducts((prev) => [...prev, productId]);
         }
+      } catch (error) {
+        console.error("Error updating product likes:", error);
       }
     }
   };
 
   return (
-    <div className="p-8">
-      <h1 className="font-Anton text-6xl font-semibold mb-6 mt-4">
-        Women's Products
-      </h1>
-      {/* <Filter />{" "} */}
-      <div className="flex mt-6">
-        {/* <Sidebar /> */}
-        <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-16 p-8">
-          {products.map((product) => (
-            <div className="flex flex-col gap-y-3 items-center justify-around">
-              <Link
-                to={`/product/${product._id}`}
-                key={product._id}
-                className="bg-white max-w-xs h-[350px] flex flex-col justify-between items-start relative p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
-              >
-                <div className="w-full h-[250px] flex justify-center items-center bg-zinc-200 rounded-lg overflow-hidden">
-                  <img
-                    src={`http://localhost:5001/${product.image}`}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h1 className="text-[#151414] font-Inter text-base font-semibold mt-3">
-                  {product.name}
-                </h1>
-                <p className="text-sm text-[#838383]">
-                  {product.categoryId.name}
-                </p>
-                <p className="text-[#151414] font-Inter text-base font-medium mt-2">
-                  {`$${product.price}`}
-                </p>
-              </Link>
+    <div>
+      <h1 className="font-Anton text-6xl font-semibold p-12">Women's Products</h1>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-16 p-8">
+        {products.length > 0 ? (
+          products.map((product) => (
+            <div
+              key={product._id}
+              onClick={() => handleProductClick(product._id)}
+              className="bg-white max-w-xs h-[400px] flex flex-col justify-between items-start relative p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+            >
+              <div className="w-full h-[250px] flex justify-center items-center bg-zinc-200 rounded-lg overflow-hidden">
+                <img
+                  src={`http://localhost:5001/${product.image}`}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h1 className="text-[#151414] font-Inter text-base font-semibold mt-3">
+                {product.name}
+              </h1>
+              <p className="text-sm text-[#838383]">
+                {product.categoryId?.name || "Unknown Category"}
+              </p>
+              <p className="text-[#151414] font-Inter text-base font-medium mt-2">
+                ${product.price}
+              </p>
               <div
                 className="flex justify-center items-center mt-2 cursor-pointer transition-transform duration-300 hover:scale-125"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLikeClick(product._id);
-                }}
+                onClick={(e) => handleLikeClick(e, product._id)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +102,7 @@ function WomenProducts() {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="size-6"
+                  className="w-6 h-6"
                 >
                   <path
                     strokeLinecap="round"
@@ -108,11 +112,13 @@ function WomenProducts() {
                 </svg>
               </div>
             </div>
-          ))}
-        </div>
+          ))
+        ) : (
+          <p>No products found</p>
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default WomenProducts;
