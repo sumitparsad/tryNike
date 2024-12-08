@@ -435,227 +435,220 @@ function Admin() {
       </nav>
 
       {/* Add New Product Form */}
-      {showForm && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-1/3">
-            <h3 className="text-2xl font-semibold mb-4">Add New Product</h3>
-            <form onSubmit={handleAddProduct}>
-              <div className="mb-4">
-                <label htmlFor="name" className="block text-sm font-medium">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={newProduct.name}
-                  onChange={handleProductInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={newProduct.description}
-                  onChange={handleProductInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="price" className="block text-sm font-medium">
-                  Price
-                </label>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  value={newProduct.price}
-                  onChange={handleProductInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="image" className="block text-sm font-medium">
-                  Image
-                </label>
-                <input
-                  type="file"
-                  id="image"
-                  name="image"
-                  onChange={handleFileInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-full bg-gray-300 text-black hover:bg-gray-400 transition duration-300"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="categoryId"
-                  className="block text-sm font-medium"
-                >
-                  Category ID
-                </label>
-                <input
-                  type="text"
-                  id="categoryId"
-                  name="categoryId"
-                  value={newProduct.categoryId}
-                  onChange={handleProductInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="stock" className="block text-sm font-medium">
-                  Stock
-                </label>
-                <input
-                  type="number"
-                  id="stock"
-                  name="stock"
-                  value={newProduct.stock}
-                  onChange={handleProductInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full py-2 bg-blue-600 text-white rounded-md"
-              >
-                Add Product
-              </button>
-            </form>
-
-            <button
-              onClick={handleCloseForm}
-              className="mt-4 text-red-600"
-            >
-              Close
-            </button>
-          </div>
+    {showForm && (
+  <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-8 rounded-lg shadow-lg w-1/3">
+      <h3 className="text-2xl font-semibold mb-4">Add New Product</h3>
+      <form onSubmit={handleAddProduct}>
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-sm font-medium">
+            Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={newProduct.name}
+            onChange={handleProductInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
         </div>
-      )}
+        <div className="mb-4">
+          <label htmlFor="description" className="block text-sm font-medium">
+            Description
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            value={newProduct.description}
+            onChange={handleProductInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="price" className="block text-sm font-medium">
+            Price
+          </label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            value={newProduct.price}
+            onChange={handleProductInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="image" className="block text-sm font-medium">
+            Image
+          </label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleFileInputChange}
+            className="w-full p-2 border border-gray-300 rounded-full bg-gray-300 text-black hover:bg-gray-400 transition duration-300"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="categoryId" className="block text-sm font-medium">
+            Category
+          </label>
+          <select
+            id="categoryId"
+            name="categoryId"
+            value={newProduct.categoryId}
+            onChange={handleProductInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          >
+            <option value="">Select Category</option>
+            {categories.map((category) => (
+              <option key={category._id} value={category._id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label htmlFor="stock" className="block text-sm font-medium">
+            Stock
+          </label>
+          <input
+            type="number"
+            id="stock"
+            name="stock"
+            value={newProduct.stock}
+            onChange={handleProductInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full py-2 bg-blue-600 text-white rounded-md"
+        >
+          Add Product
+        </button>
+      </form>
+
+      <button onClick={handleCloseForm} className="mt-4 text-red-600">
+        Close
+      </button>
+    </div>
+  </div>
+)}
       {showEditForm && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-1/3">
-            <h3 className="text-2xl font-semibold mb-4">Edit Product</h3>
-            <form onSubmit={handleUpdateProduct}>
-              <div className="mb-4">
-                <label htmlFor="name" className="block text-sm font-medium">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={editProduct.name}
-                  onChange={handleEditProductInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={editProduct.description}
-                  onChange={handleEditProductInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="price" className="block text-sm font-medium">
-                  Price
-                </label>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  value={editProduct.price}
-                  onChange={handleEditProductInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="image" className="block text-sm font-medium">
-                  Image
-                </label>
-                <input
-                  type="file"
-                  id="image"
-                  name="image"
-                  onChange={(e) =>
-                    setEditProduct({ ...editProduct, image: e.target.files[0] })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded-full bg-gray-300 text-black hover:bg-gray-400 transition duration-300"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="categoryId"
-                  className="block text-sm font-medium"
-                >
-                  Category ID
-                </label>
-                <input
-                  type="text"
-                  id="categoryId"
-                  name="categoryId"
-                  value={editProduct.categoryId}
-                  onChange={handleEditProductInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="stock" className="block text-sm font-medium">
-                  Stock
-                </label>
-                <input
-                  type="number"
-                  id="stock"
-                  name="stock"
-                  value={editProduct.stock}
-                  onChange={handleEditProductInputChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full py-2 bg-blue-600 text-white rounded-md"
-              >
-                Update Product
-              </button>
-            </form>
-
-            <button
-              onClick={() => setShowEditForm(false)}
-              className="mt-4 text-red-600"
-            >
-              Close
-            </button>
-          </div>
+  <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-8 rounded-lg shadow-lg w-1/3">
+      <h3 className="text-2xl font-semibold mb-4">Edit Product</h3>
+      <form onSubmit={handleUpdateProduct}>
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-sm font-medium">
+            Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={editProduct.name}
+            onChange={handleEditProductInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
         </div>
-      )}
+        <div className="mb-4">
+          <label htmlFor="description" className="block text-sm font-medium">
+            Description
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            value={editProduct.description}
+            onChange={handleEditProductInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="price" className="block text-sm font-medium">
+            Price
+          </label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            value={editProduct.price}
+            onChange={handleEditProductInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="image" className="block text-sm font-medium">
+            Image
+          </label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={(e) =>
+              setEditProduct({ ...editProduct, image: e.target.files[0] })
+            }
+            className="w-full p-2 border border-gray-300 rounded-full bg-gray-300 text-black hover:bg-gray-400 transition duration-300"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="categoryId" className="block text-sm font-medium">
+            Category
+          </label>
+          <select
+            id="categoryId"
+            name="categoryId"
+            value={editProduct.categoryId}
+            onChange={handleEditProductInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          >
+            <option value="">Select Category</option>
+            {categories.map((category) => (
+              <option key={category._id} value={category._id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label htmlFor="stock" className="block text-sm font-medium">
+            Stock
+          </label>
+          <input
+            type="number"
+            id="stock"
+            name="stock"
+            value={editProduct.stock}
+            onChange={handleEditProductInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full py-2 bg-blue-600 text-white rounded-md"
+        >
+          Update Product
+        </button>
+      </form>
+      <button onClick={() => setShowEditForm(false)} className="mt-4 text-red-600">
+        Close
+      </button>
+    </div>
+  </div>
+)}
 
       {/* Product Management */}
       {activeTab === "products" && (
@@ -884,7 +877,7 @@ function Admin() {
                 required
               />
             </div>
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="block font-semibold mb-2">Role</label>
               <select
                 name="role"
@@ -897,7 +890,7 @@ function Admin() {
                 <option value="Moderator">Moderator</option>
                 <option value="SuperAdmin">SuperAdmin</option>
               </select>
-            </div>
+            </div> */}
             <button
               type="submit"
               className="px-6 py-2 bg-green-600 text-white rounded"

@@ -18,7 +18,7 @@ const adminSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["SuperAdmin", "Moderator", "Admin"], // Define possible roles for the admin
-      // default: "Admin", // Default role
+      default: "Admin", // Default role
     },
   },
   { timestamps: true } // Automatically creates 'createdAt' and 'updatedAt' fields
