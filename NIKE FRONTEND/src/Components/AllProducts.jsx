@@ -123,6 +123,7 @@ const AllProducts = () => {
         )}
       </div>
     </div>
+    
   );
 };
 
